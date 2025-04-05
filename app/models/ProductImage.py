@@ -4,7 +4,7 @@ from sqlalchemy.sql import func
 class ProductImage(Base):
     __tablename__ = "product_images"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     product_id = Column(Uuid(as_uuid=True))
     image_url = Column(Text, nullable=False)
     alt_text = Column(Text)

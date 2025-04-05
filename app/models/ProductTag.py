@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, Uuid, ForeignKeyConstraint, PrimaryKeyCo
 from app.core.database import Base 
 
 class ProductTag(Base):
-    __tablename__ = "product_tag_availability"
+    __tablename__ = "product_tags"
     product_id = Column(Uuid(as_uuid=True))
     tag_id = Column(Integer)
 

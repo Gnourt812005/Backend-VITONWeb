@@ -20,7 +20,7 @@ class ProductImageUpdate(BaseModel):
     is_primary: Optional[bool] = None
 
 class ProductImageOut(ProductImageBase):
-    id: UUID
+    id: int
     created_at: Optional[datetime] = None
     class Config:
         orm_mode = True 

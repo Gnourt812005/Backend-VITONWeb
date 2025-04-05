@@ -3,7 +3,7 @@ from app.core.database import Base
 
 class Sizes(Base):
     __tablename__ = "sizes"
-    id = Column(Integer, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     size_code = Column(Text, nullable=False)
     display_name = Column(Text, nullable=False)
 

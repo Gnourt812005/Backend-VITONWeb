@@ -1,8 +1,8 @@
 from app.models.ProductTag import ProductTag
 from app.schemas.ProductTag import ProductTagCreate, ProductTagUpdate
-from app.crud.Base import BaseCRUD
+from app.crud.BaseComposite import BaseCRUDComposite
 
-class ProductTagCRUD(BaseCRUD[ProductTag, ProductTagCreate, ProductTagUpdate]):
+class ProductTagCRUD(BaseCRUDComposite[ProductTag, ProductTagCreate, ProductTagUpdate]):
     pass
 
 product_tag_crud = ProductTagCRUD(ProductTag)

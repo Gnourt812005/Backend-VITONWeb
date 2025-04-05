@@ -4,7 +4,7 @@ from app.core.database import Base
 class Colors(Base):
     __tablename__ = "colors"
     id = Column(Integer)
-    color_name = Column(Text, nullable=False)
+    color_name = Column(Text, primary_key=True, nullable=False)
     hex_code = Column(Text, nullable=False)
 
     __tablearg__ = (

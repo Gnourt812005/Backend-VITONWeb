@@ -37,7 +37,7 @@ async def update(id: UUID, obj_in: ProductsUpdate, db : Session = Depends(get_da
     return products_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
 # DELETE: Delete row
-@router.delete("/product/{id}", response_model=List[ProductsOut])
+@router.delete("/product/{id}", response_model=ProductsOut)
 async def delete(id: UUID, db : Session = Depends(get_database)):
     response = products_crud.delete(db=db, id=id)
     if not response:
