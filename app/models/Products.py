@@ -1,11 +1,11 @@
-from sqlalchemy import Column, Integer, Text, Numeric, DateTime, CheckConstraint
+from sqlalchemy import Column, Integer, Text, Numeric, DateTime, CheckConstraint, PrimaryKeyConstraint
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.sql import func
 from app.core.database import Base 
 
 class Products(Base):
     __tablename__ = "products"
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default="gen_random_uuid()")
+    id = Column(UUID(as_uuid=True), server_default="gen_random_uuid()")
     name = Column(Text, nullable=False)
     brand = Column(Text, nullable=False)
     description = Column(Text)
@@ -23,5 +23,6 @@ class Products(Base):
 
 
     __table_args__ = (
+        PrimaryKeyConstraint("id", name="products_pkey"),
         CheckConstraint("review_count >= 0", name="products_review_count_check"),  # Check constraint
     )
