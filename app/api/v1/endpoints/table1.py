@@ -13,7 +13,7 @@ router = APIRouter()
 async def getProductImages(db : Session = Depends(get_database) ):
     try:
         response = db.query(ImagePerson).all()
-        data = [{"id": image.id, "url": image.url} for image in response]
+        data = [{"id": image.id, "url": image.url, "created_at" : image.created_at.isoformat()} for image in response]
         return JSONResponse(content=data)
     except Exception as e:
         print(f"Error: {e}")

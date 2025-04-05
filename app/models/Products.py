@@ -1,20 +1,27 @@
-from sqlalchemy import Column, Integer, Text, Numeric, DateTime, Uuid
+from sqlalchemy import Column, Integer, Text, Numeric, DateTime, CheckConstraint
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy.sql import func
 from app.core.database import Base 
 
 class Products(Base):
     __tablename__ = "products"
-    id = Column(Uuid, primary_key=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default="gen_random_uuid()")
     name = Column(Text, nullable=False)
     brand = Column(Text, nullable=False)
     description = Column(Text)
-    price = Column(Numeric, nullable=False)
-    original_price = Column(Numeric)
+    price = Column(Numeric(10, 2), nullable=False)
+    original_price = Column(Numeric(10, 2))
     fabric = Column(Text)
-    care_instructions = Column(Text)
-    features = Column(Text)
-    stock = Column(Integer)
-    average_rating = Column(Numeric)
-    review_count = Column(Integer)
+    care_instructions = Column(ARRAY(Text))
+    features = Column(ARRAY(Text))
+    stock = Column(Integer, server_default="0")
+    average_rating = Column(Numeric(10, 1), server_default="0.0")
+    review_count = Column(Integer, server_default="0")
     category = Column(Text, nullable=False)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())  # Default and auto-update
+
+
+    __table_args__ = (
+        CheckConstraint("review_count >= 0", name="products_review_count_check"),  # Check constraint
+    )
