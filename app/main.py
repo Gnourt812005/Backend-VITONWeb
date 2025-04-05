@@ -1,41 +1,32 @@
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
+from app.core.config import settings
+from app.core.database import engine, Base
 
-import databases
-from dotenv import load_dotenv
-import os 
-
-# Add file .env to get URL database
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-database = databases.Database(DATABASE_URL)
+from app.api.v1.endpoints.table1 import router as table1_router
 
 # Startup and shutdown event
 @asynccontextmanager
 async def lifespan(app : FastAPI):
-    await database.connect()
-    yield
-    await database.disconnect()
-
-app = FastAPI(lifespan=lifespan)
-
-
-
-@app.get("/imageperson")
-async def getProductImages():
-    try:
-        query = "SELECT * FROM imageperson"
-        response = await database.fetch_all(query)
-        return JSONResponse(content=[dict(r) for r in response])
+    try: 
+        with engine.connect() as connection:
+            print("Database coonect successfully")
+        Base.metadata.create_all(bind=engine)
     except Exception as e:
-        print("Error")
+        print(f"Database connection failed: {e}")
+    yield
 
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    lifespan=lifespan
+)
+
+
+# Config routing
+app.include_router(table1_router, prefix="/table1", tags=["table1"])
+
+# Test 
 @app.get("/test")
 async def test():
     print("Test endpoint hit!")
     return {"msg": "Hello!"}
-
-
-

@@ -1,6 +1,10 @@
 
-python-dotenv
 fastapi
 uvicorn
 databases 
 asyncpg
+
+python-dotenv
+pydantic_settings
+sqlalchemy 
+psycopg2
