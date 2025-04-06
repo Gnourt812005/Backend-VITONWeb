@@ -16,4 +16,4 @@ class ProductColorUpdate(BaseModel):
 
 class ProductColorOut(ProductColorBase):
     class Config:
-        orm_mode = True 
+        from_attributes = True 

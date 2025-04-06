@@ -16,4 +16,4 @@ class ProductSizeUpdate(BaseModel):
 
 class ProductSizeOut(ProductSizeBase):
     class Config:
-        orm_mode = True 
+        from_attributes = True 

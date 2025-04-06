@@ -11,7 +11,6 @@ from app.api.v1.endpoints.ProductImage  import router as product_image_router
 from app.api.v1.endpoints.ProductColor  import router as product_color_router
 from app.api.v1.endpoints.ProductSize   import router as product_size_router
 from app.api.v1.endpoints.ProductTag    import router as product_tag_router
-
 from sqlalchemy                         import inspect
 # Startup and shutdown event
 @asynccontextmanager
@@ -19,7 +18,6 @@ async def lifespan(app : FastAPI):
     try: 
         with engine.connect() as connection:
             print("Database coonect successfully")
-        print(settings.DATABASE_URL)
         # Base.metadata.create_all(bind=engine)
     except Exception as e:
         print(f"Database connection failed: {e}")

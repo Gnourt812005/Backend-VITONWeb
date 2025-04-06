@@ -14,4 +14,4 @@ class ProductTagUpdate(BaseModel):
 
 class ProductTagOut(ProductTagBase):
     class Config:
-        orm_mode = True 
+        from_attributes = True 
