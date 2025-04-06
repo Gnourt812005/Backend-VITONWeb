@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.core.database import get_database
-from app.crud.ProductImage import product_image_crud
-from app.schemas.ProductImage import ProductImageCreate, ProductImageUpdate, ProductImageOut
+from app.crud.product_image import product_image_crud
+from app.schemas.product_image import ProductImageCreate, ProductImageUpdate, ProductImageOut
 
 router = APIRouter()
 

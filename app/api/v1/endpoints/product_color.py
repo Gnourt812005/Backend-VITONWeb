@@ -5,8 +5,8 @@ from typing import List
 from uuid import UUID
 
 from app.core.database import get_database
-from app.crud.ProductColor import product_color_crud
-from app.schemas.ProductColor import ProductColorCreate, ProductColorUpdate, ProductColorOut
+from app.crud.product_color import product_color_crud
+from app.schemas.product_color import ProductColorCreate, ProductColorUpdate, ProductColorOut
 
 router = APIRouter()
 

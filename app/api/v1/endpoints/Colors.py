@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.core.database import get_database
-from app.crud.Colors import colors_crud
-from app.schemas.Colors import ColorsCreate, ColorsUpdate, ColorsOut
+from app.crud.colors import colors_crud
+from app.schemas.colors import ColorsCreate, ColorsUpdate, ColorsOut
 
 router = APIRouter()
 

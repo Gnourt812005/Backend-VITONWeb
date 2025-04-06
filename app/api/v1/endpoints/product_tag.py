@@ -5,8 +5,8 @@ from typing import List
 from uuid import UUID
 
 from app.core.database import get_database
-from app.crud.ProductTag import product_tag_crud
-from app.schemas.ProductTag import ProductTagCreate, ProductTagUpdate, ProductTagOut
+from app.crud.product_tag import product_tag_crud
+from app.schemas.product_tag import ProductTagCreate, ProductTagUpdate, ProductTagOut
 
 router = APIRouter()
 

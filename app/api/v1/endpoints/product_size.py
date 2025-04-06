@@ -5,8 +5,8 @@ from typing import List
 from uuid import UUID
 
 from app.core.database import get_database
-from app.crud.ProductSize import product_size_crud
-from app.schemas.ProductSize import ProductSizeCreate, ProductSizeUpdate, ProductSizeOut
+from app.crud.product_size import product_size_crud
+from app.schemas.product_size import ProductSizeCreate, ProductSizeUpdate, ProductSizeOut
 
 router = APIRouter()
 

@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.core.database import get_database
-from app.crud.Sizes import sizes_crud
-from app.schemas.Sizes import SizesCreate, SizesUpdate, SizesOut
+from app.crud.sizes import sizes_crud
+from app.schemas.sizes import SizesCreate, SizesUpdate, SizesOut
 
 router = APIRouter()
 

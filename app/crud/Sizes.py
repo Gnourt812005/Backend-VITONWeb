@@ -1,6 +1,6 @@
-from app.models.Sizes import Sizes
-from app.schemas.Sizes import SizesCreate, SizesUpdate
-from app.crud.Base import BaseCRUD
+from app.models.sizes import Sizes
+from app.schemas.sizes import SizesCreate, SizesUpdate
+from app.crud.base import BaseCRUD
 
 class SizesCRUD(BaseCRUD[Sizes, SizesCreate, SizesUpdate]):
     pass

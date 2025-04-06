@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.core.database import get_database
-from app.crud.Tags import tags_crud
-from app.schemas.Tags import TagsCreate, TagsUpdate, TagsOut
+from app.crud.tags import tags_crud
+from app.schemas.tags import TagsCreate, TagsUpdate, TagsOut
 
 router = APIRouter()
 
