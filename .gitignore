@@ -62,3 +62,4 @@ Thumbs.db  # Windows
 # Project-specific (optional)
 migrations/  # If using an ORM with migration files (e.g., Alembic)
 *.sql  # SQL dumps or scripts
+experiments/

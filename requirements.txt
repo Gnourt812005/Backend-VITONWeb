@@ -8,3 +8,4 @@ python-dotenv
 pydantic_settings
 sqlalchemy 
 psycopg2
+redis
