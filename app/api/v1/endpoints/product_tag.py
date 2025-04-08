@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi import status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List
@@ -11,12 +12,12 @@ from app.schemas.product_tag import ProductTagCreate, ProductTagUpdate, ProductT
 router = APIRouter()
 
 # GET: Fetch all data
-@router.get("/product_tag", response_model=List[ProductTagOut])
+@router.get("/", response_model=List[ProductTagOut])
 async def get_all(db : Session = Depends(get_database)):
     return product_tag_crud.get_all(db=db)
 
 # GET: Fetch with id
-@router.get("/product_tag/{product_id}{tag_id}", response_model=ProductTagOut)
+@router.get("/{product_id}{tag_id}", response_model=ProductTagOut)
 async def get(product_id: UUID, tag_id: int, db : Session = Depends(get_database)):
     keys = {"product_id" : product_id, "tag_id": tag_id}
     response = product_tag_crud.get(db=db, keys=keys)
@@ -25,12 +26,12 @@ async def get(product_id: UUID, tag_id: int, db : Session = Depends(get_database
     return response
 
 # POST: Create new row
-@router.post("/product_tag", response_model=ProductTagOut)
+@router.post("/", response_model=ProductTagOut, status_code=status.HTTP_201_CREATED)
 async def create(obj_in: ProductTagCreate, db: Session = Depends(get_database)):
     return product_tag_crud.create(db=db, obj_in=obj_in)
 
 # PUT: Update row
-@router.put("/product_tag/{product_id}{tag_id}", response_model=ProductTagOut)
+@router.put("/{product_id}{tag_id}", response_model=ProductTagOut)
 async def update(product_id: UUID, tag_id: int, obj_in: ProductTagUpdate, db : Session = Depends(get_database)):
     keys = {"product_id" : product_id, "tag_id": tag_id}
     db_obj = product_tag_crud.get(db=db, keys=keys)
@@ -39,7 +40,7 @@ async def update(product_id: UUID, tag_id: int, obj_in: ProductTagUpdate, db : S
     return product_tag_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
 # DELETE: Delete row
-@router.delete("/product_tag/{product_id}{tag_id}", response_model=ProductTagOut)
+@router.delete("/{product_id}{tag_id}", response_model=ProductTagOut)
 async def delete(product_id: UUID, tag_id: int, db : Session = Depends(get_database)):
     keys = {"product_id" : product_id, "tag_id": tag_id}
     db_obj = product_tag_crud.get(db=db, keys=keys)

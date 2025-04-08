@@ -1,4 +1,5 @@
 from pydantic import BaseModel 
+from pydantic import ConfigDict
 from typing import Optional
 from uuid import UUID
 class ProductTagBase(BaseModel):
@@ -13,5 +14,4 @@ class ProductTagUpdate(BaseModel):
     tag_id: Optional[int] = None
 
 class ProductTagOut(ProductTagBase):
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 

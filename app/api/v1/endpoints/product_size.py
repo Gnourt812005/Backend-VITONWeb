@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi import status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from typing import List
@@ -11,12 +12,12 @@ from app.schemas.product_size import ProductSizeCreate, ProductSizeUpdate, Produ
 router = APIRouter()
 
 # GET: Fetch all data
-@router.get("/product_size", response_model=List[ProductSizeOut])
+@router.get("/", response_model=List[ProductSizeOut])
 async def get_all(db : Session = Depends(get_database)):
     return product_size_crud.get_all(db=db)
 
 # GET: Fetch with id
-@router.get("/product_size/{product_id}{size_id}", response_model=ProductSizeOut)
+@router.get("/{product_id}{size_id}", response_model=ProductSizeOut)
 async def get(product_id: UUID, size_id: int, db : Session = Depends(get_database)):
     keys = {"product_id" : product_id, "size_id": size_id}
     response = product_size_crud.get(db=db, keys=keys)
@@ -25,12 +26,12 @@ async def get(product_id: UUID, size_id: int, db : Session = Depends(get_databas
     return response
 
 # POST: Create new row
-@router.post("/product_size", response_model=ProductSizeOut)
+@router.post("/", response_model=ProductSizeOut, status_code=status.HTTP_201_CREATED)
 async def create(obj_in: ProductSizeCreate, db: Session = Depends(get_database)):
     return product_size_crud.create(db=db, obj_in=obj_in)
 
 # PUT: Update row
-@router.put("/product_size/{product_id}{size_id}", response_model=ProductSizeOut)
+@router.put("/{product_id}{size_id}", response_model=ProductSizeOut)
 async def update(product_id: UUID, size_id: int, obj_in: ProductSizeUpdate, db : Session = Depends(get_database)):
     keys = {"product_id" : product_id, "size_id": size_id}
     db_obj = product_size_crud.get(db=db, keys=keys)
@@ -39,7 +40,7 @@ async def update(product_id: UUID, size_id: int, obj_in: ProductSizeUpdate, db :
     return product_size_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
 # DELETE: Delete row
-@router.delete("/product_size/{product_id}{size_id}", response_model=ProductSizeOut)
+@router.delete("/{product_id}{size_id}", response_model=ProductSizeOut)
 async def delete(product_id: UUID, size_id: int, db : Session = Depends(get_database)):
     keys = {"product_id" : product_id, "size_id": size_id}
     db_obj = product_size_crud.get(db=db, keys=keys)

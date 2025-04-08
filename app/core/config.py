@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
-import os 
-# from typing import Optional, Any, Dict, Any 
+from pydantic import ConfigDict
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "viton-backend"
     API_V1_STR : str = "../api/v1"
@@ -8,9 +8,7 @@ class Settings(BaseSettings):
 
     def getDatabaseUrl (self) -> str:
         return self.DATABASE_URL
-
-    class Config:
-        env_file = "../../.env"
-        case_sensitive = True
+    
+    model_config = ConfigDict(env_file="../../.env", case_sensitive=True)
 
 settings = Settings()

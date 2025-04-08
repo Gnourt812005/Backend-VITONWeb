@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi import status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -9,12 +10,12 @@ from app.schemas.tags import TagsCreate, TagsUpdate, TagsOut
 router = APIRouter()
 
 # GET: Fetch all data
-@router.get("/tags", response_model=List[TagsOut])
+@router.get("/", response_model=List[TagsOut])
 async def get_all(db : Session = Depends(get_database)):
     return tags_crud.get_all(db=db)
 
 # GET: Fetch with id
-@router.get("/tags/{id}", response_model=TagsOut)
+@router.get("/{id}", response_model=TagsOut)
 async def get(id: int, db : Session = Depends(get_database)):
     response = tags_crud.get(db=db, id=id)
     if not response:
@@ -22,12 +23,12 @@ async def get(id: int, db : Session = Depends(get_database)):
     return response
 
 # POST: Create new row
-@router.post("/tags", response_model=TagsOut)
+@router.post("/", response_model=TagsOut, status_code=status.HTTP_201_CREATED)
 async def create(obj_in: TagsCreate, db: Session = Depends(get_database)):
     return tags_crud.create(db=db, obj_in=obj_in)
 
 # PUT: Update row
-@router.put("/tags/{id}", response_model=TagsOut)
+@router.put("/{id}", response_model=TagsOut)
 async def update(id: int, obj_in: TagsUpdate, db : Session = Depends(get_database)):
     db_obj = tags_crud.get(db=db, id=id)
     if not db_obj:
@@ -35,7 +36,7 @@ async def update(id: int, obj_in: TagsUpdate, db : Session = Depends(get_databas
     return tags_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
 # DELETE: Delete row
-@router.delete("/tags/{id}", response_model=TagsOut)
+@router.delete("/{id}", response_model=TagsOut)
 async def delete(id: int, db : Session = Depends(get_database)):
     response = tags_crud.delete(db=db, id=id)
     if not response:

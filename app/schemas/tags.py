@@ -1,4 +1,5 @@
 from pydantic import BaseModel 
+from pydantic import ConfigDict
 from typing import Optional
 
 class TagsBase(BaseModel):
@@ -13,5 +14,4 @@ class TagsUpdate(BaseModel):
 class TagsOut(TagsBase):
     id: int
 
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 

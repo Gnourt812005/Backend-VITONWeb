@@ -1,4 +1,5 @@
 from pydantic import BaseModel 
+from pydantic import ConfigDict
 from typing import Optional
 from uuid import UUID
 class ProductColorBase(BaseModel):
@@ -15,5 +16,4 @@ class ProductColorUpdate(BaseModel):
     available: Optional[bool] = None
 
 class ProductColorOut(ProductColorBase):
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 

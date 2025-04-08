@@ -1,4 +1,5 @@
 from pydantic import BaseModel 
+from pydantic import ConfigDict
 from typing import Optional
 from uuid import UUID
 class ProductSizeBase(BaseModel):
@@ -15,5 +16,4 @@ class ProductSizeUpdate(BaseModel):
     available: Optional[bool] = None
 
 class ProductSizeOut(ProductSizeBase):
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 

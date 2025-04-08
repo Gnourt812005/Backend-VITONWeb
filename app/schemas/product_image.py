@@ -1,4 +1,5 @@
 from pydantic import BaseModel 
+from pydantic import ConfigDict
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
@@ -22,5 +23,4 @@ class ProductImageUpdate(BaseModel):
 class ProductImageOut(ProductImageBase):
     id: int
     created_at: Optional[datetime] = None
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 

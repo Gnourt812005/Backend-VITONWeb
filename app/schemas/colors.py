@@ -1,6 +1,6 @@
 from pydantic import BaseModel 
 from typing import Optional
-
+from pydantic import ConfigDict
 class ColorsBase(BaseModel):
     color_name: str
     hex_code: str
@@ -15,5 +15,4 @@ class ColorsUpdate(BaseModel):
 class ColorsOut(ColorsBase):
     id: int
 
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 

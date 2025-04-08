@@ -1,4 +1,5 @@
 from pydantic import BaseModel 
+from pydantic import ConfigDict
 from typing import Optional, List
 from decimal import Decimal
 from datetime import datetime
@@ -40,5 +41,4 @@ class ProductsOut(ProductsBase):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True) 

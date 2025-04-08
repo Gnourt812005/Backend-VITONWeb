@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi import status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -9,12 +10,12 @@ from app.schemas.sizes import SizesCreate, SizesUpdate, SizesOut
 router = APIRouter()
 
 # GET: Fetch all data
-@router.get("/sizes", response_model=List[SizesOut])
+@router.get("/", response_model=List[SizesOut])
 async def get_all(db : Session = Depends(get_database)):
     return sizes_crud.get_all(db=db)
 
 # GET: Fetch with id
-@router.get("/sizes/{id}", response_model=SizesOut)
+@router.get("/{id}", response_model=SizesOut)
 async def get(id: int, db : Session = Depends(get_database)):
     response = sizes_crud.get(db=db, id=id)
     if not response:
@@ -22,12 +23,12 @@ async def get(id: int, db : Session = Depends(get_database)):
     return response
 
 # POST: Create new row
-@router.post("/sizes", response_model=SizesOut)
+@router.post("/", response_model=SizesOut, status_code=status.HTTP_201_CREATED)
 async def create(obj_in: SizesCreate, db: Session = Depends(get_database)):
     return sizes_crud.create(db=db, obj_in=obj_in)
 
 # PUT: Update row
-@router.put("/sizes/{id}", response_model=SizesOut)
+@router.put("/{id}", response_model=SizesOut)
 async def update(id: int, obj_in: SizesUpdate, db : Session = Depends(get_database)):
     db_obj = sizes_crud.get(db=db, id=id)
     if not db_obj:
@@ -35,7 +36,7 @@ async def update(id: int, obj_in: SizesUpdate, db : Session = Depends(get_databa
     return sizes_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
 # DELETE: Delete row
-@router.delete("/sizes/{id}", response_model=SizesOut)
+@router.delete("/{id}", response_model=SizesOut)
 async def delete(id: int, db : Session = Depends(get_database)):
     response = sizes_crud.delete(db=db, id=id)
     if not response:
