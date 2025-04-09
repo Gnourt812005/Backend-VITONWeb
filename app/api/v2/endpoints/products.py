@@ -1,0 +1,71 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.encoders import jsonable_encoder
+
+from sqlalchemy.orm import Session
+from typing import List
+from uuid import UUID
+import json
+
+from app.core.database import get_database
+from app.crud.products import products_crud
+from app.schemas.products import ProductsCreate, ProductsUpdate, ProductsOut
+
+from app.services.redis_service import get_redis_service, RedisService
+
+router = APIRouter()
+
+@router.get("/", response_model=List[ProductsOut])
+async def get_all(db : Session = Depends(get_database), cached_client : RedisService = Depends(get_redis_service)):
+    response = cached_client.get('products')
+    if response:
+        print("Redis hit")
+        return json.loads(response)
+    
+    response = products_crud.get_all(db=db)
+    
+    serialized_response = jsonable_encoder(response)
+    if cached_client.set("products", json.dumps(serialized_response), ex=60):
+        print("Set redis successfully")
+    return response
+
+# GET: Fetch with id
+@router.get("/{id}", response_model=ProductsOut)
+async def get(id: UUID, db : Session = Depends(get_database), cached_client : RedisService = Depends(get_redis_service)):
+    response = cached_client.get(f'product:{id}')
+    if response:
+        print("Redis hit")
+        return json.loads(response)
+
+    response = products_crud.get(db=db, id=id)
+    if not response:
+        raise HTTPException(status_code=404, detail="Product not found")
+    serialized_response = jsonable_encoder(response)
+    if cached_client.set(f'product:{id}', json.dumps(serialized_response), ex=60):
+        print("Set redis successfully")
+    return response
+
+# POST: Create new row
+@router.post("/", response_model=ProductsOut, status_code=status.HTTP_201_CREATED)
+async def create(obj_in: ProductsCreate, db: Session = Depends(get_database)):
+    return products_crud.create(db=db, obj_in=obj_in)
+
+# PUT: Update row
+@router.put("/{id}", response_model=ProductsOut)
+async def update(id: UUID, obj_in: ProductsUpdate, db : Session = Depends(get_database), cached_client : RedisService = Depends(get_redis_service)):
+    cached_client.delete(f"product:{id}")
+    cached_client.delete("products")
+    db_obj = products_crud.get(db=db, id=id)
+    if not db_obj:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    return products_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
+
+# DELETE: Delete row
+@router.delete("/{id}", response_model=ProductsOut)
+async def delete(id: UUID, db : Session = Depends(get_database), cached_client : RedisService = Depends(get_redis_service)):
+    cached_client.delete(f"product:{id}")
+    cached_client.delete("products")
+    response = products_crud.delete(db=db, id=id)
+    if not response:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return response
