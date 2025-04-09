@@ -41,7 +41,7 @@ app = FastAPI(
 # app.include_router(product_color_router, prefix="/product_color", tags=["product_color"])
 # app.include_router(product_size_router, prefix="/product_size", tags=["product_size"])
 # app.include_router(product_tag_router, prefix="/product_tag", tags=["product_tag"])
-app.include_router(router_v1, prefix="/api/v1")
+# app.include_router(router_v1, prefix="/api/v1")
 app.include_router(router_v2, prefix="/api/v2")
 # Test 
 @app.get("/test")
@@ -49,19 +49,8 @@ async def test():
     print("Test endpoint hit!")
     return {"msg": "Hello!"}
 
-@app.get("/tables/count")
-async def get_table_count():
-    inspector = inspect(engine)
-    tables = inspector.get_table_names()
-    return {"table_count": len(tables), "tables": tables}
-
-# @app.post("/redis")
-# async def create():
-#     success = redis_engine.flushall()
-#     return {"status" : success}
-
-# @app.get("/redis")
-# async def get(key : str):
-#     # success = redis_engine.set('foo', 'bar')
-#     return {redis_engine.ttl(key)}
-
+# @app.get("/tables/count")
+# async def get_table_count():
+#     inspector = inspect(engine)
+#     tables = inspector.get_table_names()
+#     return {"table_count": len(tables), "tables": tables}
