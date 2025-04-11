@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text, Numeric, DateTime, CheckConstraint, PrimaryKeyConstraint
+from sqlalchemy import Column, Integer, Text, Numeric, DateTime, CheckConstraint, PrimaryKeyConstraint, JSON
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.sql import func
 from app.core.database import Base 
@@ -12,8 +12,8 @@ class Products(Base):
     price = Column(Numeric(10, 2), nullable=False)
     original_price = Column(Numeric(10, 2))
     fabric = Column(Text)
-    care_instructions = Column(ARRAY(Text))
-    features = Column(ARRAY(Text))
+    care_instructions = Column(JSON(Text))
+    features = Column(JSON(Text))
     stock = Column(Integer, server_default="0")
     average_rating = Column(Numeric(10, 1), server_default="0.0")
     review_count = Column(Integer, server_default="0")

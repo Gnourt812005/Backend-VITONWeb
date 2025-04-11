@@ -1,29 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.encoders import jsonable_encoder
-
 from sqlalchemy.orm import Session
 from typing import List
 
 from app.core.database import get_database
 from app.crud.colors import colors_crud
 from app.schemas.colors import ColorsCreate, ColorsUpdate, ColorsOut
-from app.services.redis_service import get_redis_service, RedisService
 
 router = APIRouter()
 
 # GET: Fetch all data
 @router.get("/", response_model=List[ColorsOut])
-async def get_all(db : Session = Depends(get_database), cached_client : RedisService = Depends(get_redis_service)):
-    response = cached_client.get_with_json('colors')
-    if response:
-        print("Redis hit")
-        return response
-    response = colors_crud.get_all(db=db)
-
-    serialized_response = jsonable_encoder(response)
-    if cached_client.set_with_json("products", serialized_response, ex=60):
-        print("Set redis successfully")
-    return response
+async def get_all(db : Session = Depends(get_database)):
+    return colors_crud.get_all(db=db)
 
 # GET: Fetch with id
 @router.get("/{id}", response_model=ColorsOut)

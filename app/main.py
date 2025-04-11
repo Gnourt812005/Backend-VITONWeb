@@ -1,8 +1,8 @@
-from fastapi                            import FastAPI
+from fastapi                            import FastAPI, Request
 from contextlib                         import asynccontextmanager
 from app.core.config                    import settings
 from app.core.database                  import engine, Base
-
+import time
 # from app.api.v1.endpoints.Products      import router as products_router
 # from app.api.v1.endpoints.Sizes         import router as sizes_router
 # from app.api.v1.endpoints.Tags          import router as tags_router
@@ -31,6 +31,13 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+@app.middleware("http")
+async def log_request(request : Request, call_next):
+    start = time.time()
+    response = await call_next(request)
+
+    print(f"{request.method} completed in {(time.time() - start):2f}s")
+    return response
 
 # Config routing
 # app.include_router(products_router, prefix="/products", tags=["products"])
