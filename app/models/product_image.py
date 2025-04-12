@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, Uuid, PrimaryKeyConstraint, ForeignKeyConstraint ,Boolean, Text, DateTime
 from app.core.database import Base 
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
+
 class ProductImage(Base):
     __tablename__ = "product_images"
 
@@ -10,6 +12,8 @@ class ProductImage(Base):
     alt_text = Column(Text)
     is_primary = Column(Boolean, server_default="false")
     created_at = Column(DateTime, server_default=func.now())
+
+    rlts_products = relationship("Products", foreign_keys=[product_id], back_populates="rlts_product_image")
 
     __table_args__ = (
         PrimaryKeyConstraint("id", name="product_images_pkey"),

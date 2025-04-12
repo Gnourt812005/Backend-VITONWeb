@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 from uuid import UUID
 
@@ -11,10 +12,84 @@ from app.crud.product_color import product_color_crud
 from app.crud.product_image import product_image_crud
 from app.models.product_color import ProductColor
 from app.models.product_size import ProductSize
+from app.models.product_tag import ProductTag
+from app.models.product_size import ProductSize
+from app.models.product_image import ProductImage
+
 from app.schemas.products import ProductsCreate, ProductsUpdate, ProductsOut
 from app.schemas.product_color import ProductColorOut
 
 router = APIRouter()
+
+def serialize_product_size(obj):
+    res = []
+
+    for item in obj:
+        extract = {
+            "size_code" : None,
+            "display_name" : None,
+            "available" : None 
+        }
+        try:
+            extract["size_code"] = item.rlts_sizes.size_code if item.rlts_sizes else None
+            extract["display_name"] = item.rlts_sizes.display_name if item.rlts_sizes else None
+            extract["available"] = item.available
+        except Exception as e:
+            print(e)
+        finally:
+            res.append(extract)
+    return {"sizes" : res}
+
+def serialize_product_color(obj):
+    res = []
+
+    for item in obj:
+        extract = {
+            "hex_code" : None,
+            "color_name" : None,
+            "available" : None 
+        }
+        try:
+            extract["hex_code"] = item.rlts_colors.hex_code if item.rlts_colors else None
+            extract["color_name"] = item.rlts_colors.color_name if item.rlts_colors else None
+            extract["available"] = item.available
+        except Exception as e:
+            print(e)
+        finally:
+            res.append(extract)
+    return {"colors" :  res}
+
+def serialize_product_tag(obj):
+    res = []
+
+    for item in obj:
+        extract = ""
+        try:
+            extract = item.rlts_tags.tag_name if item.rlts_tags else None
+        except Exception as e:
+            print(e)
+        finally:
+            res.append(extract)
+    return {"tags" : res}
+
+def serialize_product_image(obj):
+    res = {
+        "imageUrl" : None,
+        "images" : []
+    }
+    for item in obj:
+        try:
+            if item.is_primary == True:
+                res["imageUrl"] = item.image_url
+            else:
+                res["images"].append({"url" : item.image_url, "alt" : item.alt_text})
+        except Exception as e:
+            print(f"Error: {e}")
+        finally:
+            pass 
+    return res
+
+
 
 # GET: Fetch all data
 @router.get("/", response_model=List[ProductsOut])
@@ -22,15 +97,24 @@ async def get_all(db : Session = Depends(get_database)):
     return products_crud.get_all(db=db)
 
 # GET: Fetch with id
-@router.get("/{id}", response_model=List[ProductColorOut])
+@router.get("/{id}", response_model=ProductsOut)
 async def get(id: UUID, db : Session = Depends(get_database)):
     data_product = products_crud.get(db=db, id=id)
     if not data_product:
         raise HTTPException(status_code=404, detail="Product not found")
-    data_color = db.query(ProductColor).filter_by(product_id=id)
-    data_size = db.query(ProductSize).filter_by(product_id=id).all()
-    print(data_color)
-    return data_color
+    data_product = jsonable_encoder(data_product)
+    data_colors = db.query(ProductColor).options(joinedload(ProductColor.rlts_colors)).filter(ProductColor.product_id==id).all()
+    data_sizes = db.query(ProductSize).options(joinedload(ProductSize.rlts_sizes)).filter(ProductSize.product_id==id).all()
+    data_tags = db.query(ProductTag).options(joinedload(ProductTag.rlts_tags)).filter(ProductTag.product_id==id).all()
+    data_images = db.query(ProductImage).filter(ProductImage.product_id==id).all()
+    print(serialize_product_image(data_images))
+    return {
+        **data_product,
+        **serialize_product_color(data_colors),
+        **serialize_product_size((data_sizes)),
+        **serialize_product_tag(data_tags),
+        **serialize_product_image(data_images)
+    }
 
 # POST: Create new row
 @router.post("/", response_model=ProductsOut, status_code=status.HTTP_201_CREATED)

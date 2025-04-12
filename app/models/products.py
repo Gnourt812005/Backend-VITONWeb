@@ -3,6 +3,12 @@ from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.sql import func
 from app.core.database import Base 
 from sqlalchemy import text
+from sqlalchemy.orm import relationship
+from app.models.product_image import ProductImage
+from app.models.product_color import ProductColor
+from app.models.product_size import ProductSize
+from app.models.product_tag import ProductTag
+
 class Products(Base):
     __tablename__ = "products"
     id = Column(UUID(as_uuid=True), server_default=text('gen_random_uuid()'))
@@ -26,3 +32,8 @@ class Products(Base):
         PrimaryKeyConstraint("id", name="products_pkey"),
         CheckConstraint("review_count >= 0", name="products_review_count_check"),  # Check constraint
     )
+
+    rlts_product_color = relationship("ProductColor", foreign_keys=[ProductColor.product_id], back_populates="rlts_products")
+    rlts_product_size = relationship("ProductSize", foreign_keys=[ProductSize.product_id], back_populates="rlts_products")
+    rlts_product_tag = relationship("ProductTag", foreign_keys=[ProductTag.product_id], back_populates="rlts_products")
+    rlts_product_image = relationship("ProductImage", foreign_keys=[ProductImage.product_id], back_populates="rlts_products")
