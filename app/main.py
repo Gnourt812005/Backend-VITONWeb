@@ -3,6 +3,7 @@ from contextlib                         import asynccontextmanager
 from app.core.config                    import settings
 from app.core.database                  import engine, Base
 import time
+from fastapi.middleware.cors import CORSMiddleware
 # from app.api.v1.endpoints.Products      import router as products_router
 # from app.api.v1.endpoints.Sizes         import router as sizes_router
 # from app.api.v1.endpoints.Tags          import router as tags_router
@@ -30,6 +31,19 @@ async def lifespan(app : FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     lifespan=lifespan
+)
+
+origins = [
+    "http://localhost:3000",  # Your Next.js frontend
+    # You can add more origins here, e.g., "https://your-production-domain.com"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,           # Allows requests from the specified origins
+    allow_credentials=True,          # Allows cookies and credentials
+    allow_methods=["*"],             # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],             # Allows all headers
 )
 
 @app.middleware("http")
