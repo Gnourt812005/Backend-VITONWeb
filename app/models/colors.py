@@ -7,7 +7,7 @@ class Colors(Base):
     color_name = Column(Text, nullable=False)
     hex_code = Column(Text, nullable=False)
 
-    __tablearg__ = (
+    __table_args__ = (
         PrimaryKeyConstraint("id", name="colors_pkey"),
         UniqueConstraint("color_name", name="colors_color_name_key")
     )

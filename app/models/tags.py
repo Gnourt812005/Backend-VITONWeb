@@ -6,6 +6,6 @@ class Tags(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     tag_name = Column(Text, nullable=False)
 
-    __tablearg__ = (
-        UniqueConstraint("tag_name", name="tags_tag_name_key")
+    __table_args__ = (
+        UniqueConstraint("tag_name", name="tags_tag_name_key"),
     )

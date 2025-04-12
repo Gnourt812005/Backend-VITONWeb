@@ -25,6 +25,7 @@ async def lifespan(app : FastAPI):
     except Exception as e:
         print(f"Database connection failed: {e}")
     yield
+    # Base.metadata.drop_all(bind=engine)
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
