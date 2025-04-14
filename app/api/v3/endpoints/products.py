@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
@@ -6,19 +7,19 @@ from typing import List
 from uuid import UUID
 
 from app.core.database import get_database
+from app.services.redis_service import RedisService, get_redis_service
 from app.crud.products import products_crud
-from app.crud.product_size import product_size_crud
-from app.crud.product_color import product_color_crud
-from app.crud.product_image import product_image_crud
+
 from app.models.product_color import ProductColor
 from app.models.product_size import ProductSize
 from app.models.product_tag import ProductTag
 from app.models.product_size import ProductSize
 from app.models.product_image import ProductImage
+from app.models.products import Products
 
 from app.schemas.products import ProductsCreate, ProductsUpdate, ProductsOut
-from app.schemas.product_color import ProductColorOut
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 def serialize_product_size(obj):
@@ -90,14 +91,37 @@ def serialize_product_image(obj):
     return res
 
 
+@router.get("/products", response_model=List[ProductsOut])
+async def get_all(db : Session = Depends(get_database), cache_client : RedisService = Depends(get_redis_service)):
+    # Check cache
+    data_products = cache_client.get_with_json("products")
+    if data_products:
+        logger.info(f"Cache hit: \"products\"")
+        return data_products
+    
+    # Fetch data from database
+    logger.info("Cache miss: \"products\"")
+    data_products = (db.query(
+                        Products,
+                        ProductImage.image_url.label("imageUrl")
+                    ).select_from(Products)
+                    .join(ProductImage, Products.id == ProductImage.product_id)
+                    .filter(ProductImage.is_primary == True).all())
 
-# GET: Fetch all data
-@router.get("/", response_model=List[ProductsOut])
-async def get_all(db : Session = Depends(get_database)):
-    return products_crud.get_all(db=db)
+    # Serialize response
+    response = []
+    for product, url in data_products:
+        serialized_product = jsonable_encoder(product)
+        serialized_product["imageUrl"] = url 
+        response.append(serialized_product)
+
+    # Set cache
+    logger.info(f"Cache set: \"products\" ; TTL: 120s")
+    cache_client.set_with_json("products", response, ex=120)   
+    return response
 
 # GET: Fetch with id
-@router.get("/{id}", response_model=ProductsOut)
+@router.get("/product/{id}", response_model=ProductsOut)
 async def get(id: UUID, db : Session = Depends(get_database)):
     data_product = products_crud.get(db=db, id=id)
     if not data_product:
@@ -107,7 +131,6 @@ async def get(id: UUID, db : Session = Depends(get_database)):
     data_sizes = db.query(ProductSize).options(joinedload(ProductSize.rlts_sizes)).filter(ProductSize.product_id==id).all()
     data_tags = db.query(ProductTag).options(joinedload(ProductTag.rlts_tags)).filter(ProductTag.product_id==id).all()
     data_images = db.query(ProductImage).filter(ProductImage.product_id==id).all()
-    print(serialize_product_image(data_images))
     return {
         **data_product,
         **serialize_product_color(data_colors),
@@ -117,12 +140,12 @@ async def get(id: UUID, db : Session = Depends(get_database)):
     }
 
 # POST: Create new row
-@router.post("/", response_model=ProductsOut, status_code=status.HTTP_201_CREATED)
+@router.post("/product/", response_model=ProductsOut, status_code=status.HTTP_201_CREATED)
 async def create(obj_in: ProductsCreate, db: Session = Depends(get_database)):
     return products_crud.create(db=db, obj_in=obj_in)
 
 # PUT: Update row
-@router.put("/{id}", response_model=ProductsOut)
+@router.put("/product/{id}", response_model=ProductsOut)
 async def update(id: UUID, obj_in: ProductsUpdate, db : Session = Depends(get_database)):
     db_obj = products_crud.get(db=db, id=id)
     if not db_obj:
@@ -130,7 +153,7 @@ async def update(id: UUID, obj_in: ProductsUpdate, db : Session = Depends(get_da
     return products_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
 # DELETE: Delete row
-@router.delete("/{id}", response_model=ProductsOut)
+@router.delete("/product/{id}", response_model=ProductsOut)
 async def delete(id: UUID, db : Session = Depends(get_database)):
     response = products_crud.delete(db=db, id=id)
     if not response:
