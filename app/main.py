@@ -30,6 +30,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+origins = [
+    "http://localhost:3000",  # Your Next.js frontend
+    # You can add more origins here, e.g., "https://your-production-domain.com"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,           # Allows requests from the specified origins
+    allow_credentials=True,          # Allows cookies and credentials
+    allow_methods=["*"],             # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],             # Allows all headers
+)
+
 @app.middleware("http")
 async def log_request(request : Request, call_next):
     start = time.time()
