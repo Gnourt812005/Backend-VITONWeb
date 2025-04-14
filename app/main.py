@@ -9,6 +9,7 @@ import time
 from app.api.v1 import router_v1
 from app.api.v2 import router_v2
 from app.api.v3 import router_v3
+from fastapi.middleware.cors import CORSMiddleware
 # Startup and shutdown event
 
 setup_logger()
