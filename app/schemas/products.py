@@ -1,6 +1,6 @@
 from pydantic import BaseModel 
 from pydantic import ConfigDict
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from decimal import Decimal
 from datetime import datetime
 from uuid import UUID
@@ -41,4 +41,9 @@ class ProductsOut(ProductsBase):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
+    sizes: Optional[List[Dict[str, Any]]] = None
+    colors: Optional[List[Dict[str, Any]]] = None
+    tags: Optional[List[str]] = None
+    imageUrl : Optional[str] = None 
+    images : Optional[List[Dict[str, Any]]] = None
     model_config = ConfigDict(from_attributes=True) 
