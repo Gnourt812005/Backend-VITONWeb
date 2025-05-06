@@ -37,9 +37,22 @@ class ProductsUpdate(BaseModel):
     category: Optional[str] = None
 
 class ProductsOut(ProductsBase):
-    id: UUID
+    id: Optional[UUID] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+    name: Optional[str] = None
+    brand: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[Decimal] = None
+    original_price: Optional[Decimal] = None
+    fabric: Optional[str] = None
+    care_instructions: Optional[List[str]] = None
+    features: Optional[List[str]] = None
+    stock: Optional[int] = None
+    average_rating: Optional[Decimal] = None
+    review_count: Optional[int] = None
+    category: Optional[str] = None
 
     sizes: Optional[List[Dict[str, Any]]] = None
     colors: Optional[List[Dict[str, Any]]] = None
