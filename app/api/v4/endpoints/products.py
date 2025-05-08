@@ -162,22 +162,22 @@ async def get(
 
     return response
 
-# POST: Create new row
-@router.post("/product/", response_model=ProductsOut, status_code=status.HTTP_201_CREATED)
-async def create(obj_in: ProductsCreate, db: Session = Depends(get_database)):
-    return products_crud.create(db=db, obj_in=obj_in)
+# # POST: Create new row
+# @router.post("/product/", response_model=ProductsOut, status_code=status.HTTP_201_CREATED)
+# async def create(obj_in: ProductsCreate, db: Session = Depends(get_database)):
+#     return products_crud.create(db=db, obj_in=obj_in)
 
-# PUT: Update row
-@router.put("/product/{id}", response_model=ProductsOut)
-async def update(id: UUID, obj_in: ProductsUpdate, db : Session = Depends(get_database)):
-    db_obj = products_crud.get(db=db, id=id)
-    if not db_obj:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return products_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
+# # PUT: Update row
+# @router.put("/product/{id}", response_model=ProductsOut)
+# async def update(id: UUID, obj_in: ProductsUpdate, db : Session = Depends(get_database)):
+#     db_obj = products_crud.get(db=db, id=id)
+#     if not db_obj:
+#         raise HTTPException(status_code=404, detail="Product not found")
+#     return products_crud.update(db=db, db_obj=db_obj, obj_in=obj_in)
 
-# DELETE: Delete row
-@router.delete("/product/{id}", response_model=ProductsOut)
-async def delete(id: UUID, db : Session = Depends(get_database)):
+# # DELETE: Delete row
+# @router.delete("/product/{id}", response_model=ProductsOut)
+# async def delete(id: UUID, db : Session = Depends(get_database)):
     response = products_crud.delete(db=db, id=id)
     if not response:
         raise HTTPException(status_code=404, detail="Product not found")
