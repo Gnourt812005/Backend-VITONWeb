@@ -1,14 +1,14 @@
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
-
+from typing import Optional
 class Settings(BaseSettings):
     PROJECT_NAME: str = "viton-backend"
     API_V1_STR : str = "../api/v1"
     DATABASE_URL : str
-    REDIS_HOST : str
-    REDIS_PORT : str
-    REDIS_USERNAME : str
-    REDIS_PASSWORD : str
+    REDIS_HOST : Optional[str] = ""
+    REDIS_PORT : Optional[str] = ""
+    REDIS_USERNAME : Optional[str] = ""
+    REDIS_PASSWORD : Optional[str] = ""
 
     def getDatabaseUrl (self) -> str:
         return self.DATABASE_URL

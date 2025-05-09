@@ -11,7 +11,7 @@ from uuid import UUID
 
 # DB, Cached client
 from app.core.database import get_database
-from app.services.redis_service import RedisService, get_redis_service
+# from app.services.redis_service import RedisService, get_redis_service
 from app.crud.products import products_crud
 
 # model of each tables use for query ORM
