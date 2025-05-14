@@ -10,6 +10,7 @@ from app.api.v1 import router_v1
 from app.api.v2 import router_v2
 from app.api.v3 import router_v3
 from app.api.v4 import router_v4
+from app.api.v5 import router_v5
 from fastapi.middleware.cors import CORSMiddleware
 # Startup and shutdown event
 
@@ -54,7 +55,8 @@ async def log_request(request : Request, call_next):
     return response
 
 # Config routing
-app.include_router(router_v4, prefix="/api/v4")
+app.include_router(router_v5, prefix="/api/v5")
+# app.include_router(router_v4, prefix="/api/v4")
 
 # Test 
 @app.get("/test")
